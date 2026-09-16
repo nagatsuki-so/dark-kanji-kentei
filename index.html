@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ダーク漢字検定 〜怪異・呪術・難読漢字〜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <div class="fog-layer"></div>
+  <div class="embers" id="embers"></div>
+  <div class="sound-control">
+    <span class="bgm-label">BGM</span>
+    <button class="icon-btn global-sound-btn" id="btn-mute" title="音声のON/OFF">🔊</button>
+  </div>
+
+  <main>
+
+    <!-- ▼ タイトル画面 -->
+    <section id="screen-title" class="screen active">
+      <div class="glyph-guard">魑</div>
+      <div class="title-block">
+        <h1>ダーク漢字検定</h1>
+        <div class="seal-divider"></div>
+        <p class="sub">怪異・呪術・難読漢字</p>
+      </div>
+      <button class="btn-start" id="btn-open-seal">封を解く</button>
+      <p class="title-hint" id="title-hint"></p>
+    </section>
+
+    <!-- ▼ 読込エラー画面 -->
+    <section id="screen-error" class="screen">
+      <div class="glyph-guard" style="color:var(--blood-bright);">封</div>
+      <div class="title-block">
+        <h2 style="font-family:'Yuji Syuku',serif;font-size:22px;margin:0 0 10px;">問題の召喚に失敗した</h2>
+        <p class="sub" id="error-detail" style="line-height:1.7;">questions.json を読み込めませんでした。</p>
+      </div>
+      <button class="btn-start" id="btn-retry-load">再度試みる</button>
+    </section>
+
+    <!-- ▼ モード選択画面 -->
+    <section id="screen-mode" class="screen">
+      <div class="mode-heading">
+        <h2>解答方式を選択</h2>
+      </div>
+      <button class="mode-card" data-mode="choice">
+        <span class="m-title">選択方式 <span class="m-tag">初級</span></span>
+        <span class="m-desc">4つの読みから正解を選ぶ。サクサク進める入門編。</span>
+      </button>
+      <button class="mode-card" data-mode="free">
+        <span class="m-title">入力方式 <span class="m-tag">上級</span></span>
+        <span class="m-desc">読み方を自分で打ち込む。ひらがな・カタカナどちらでも可。</span>
+      </button>
+      <button class="link-back link-back-corner" id="btn-mode-back">タイトルへ戻る</button>
+    </section>
+
+    <!-- ▼ クイズ画面 -->
+    <section id="screen-quiz" class="screen">
+      <button class="link-back link-back-corner" id="btn-quiz-home">タイトルへ戻る</button>
+
+      <div class="quiz-topbar">
+        <div class="progress-wrap">
+          <div class="progress-label" id="progress-label">問 1 / 10 ・ 正解 0</div>
+          <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="kanji-stage">
+        <div class="kanji-main" id="kanji-main">魑魅魍魎</div>
+        <div class="kanji-index" id="kanji-index-label">この漢字の読みは？</div>
+      </div>
+
+      <div class="answer-zone">
+        <div class="choice-grid" id="choice-grid"></div>
+
+        <div class="free-input-row" id="free-input-row" style="display:none;">
+          <input type="text" class="free-input" id="free-input" placeholder="よみを入力" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <button class="btn-submit" id="btn-submit">判定</button>
+        </div>
+        <div class="input-hint" id="free-hint" style="display:none;">送り仮名の有無・全角/半角・スペース・カナ表記の違いは自動で吸収されます</div>
+      </div>
+    </section>
+
+    <!-- ▼ 結果画面 -->
+    <section id="screen-result" class="screen">
+      <button class="link-back link-back-corner" id="btn-result-home">タイトルへ戻る</button>
+      <div class="result-main">
+        <div class="result-row"><span class="result-label">正答数</span><span class="result-value"><span id="result-score-num">0</span> / <span id="result-score-total">15</span></span></div>
+        <div class="result-row"><span class="result-label">称号</span><span class="result-value" id="result-rank">見習い祓魔師</span></div>
+        <div class="result-glyph-block" id="result-glyph-block">
+          <div class="result-row"><span class="result-label">階級</span></div>
+          <div class="result-glyph-big" id="result-glyph">霊</div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-start" id="btn-retry-same">同じ形式で再挑戦</button>
+        <button class="btn-secondary" id="btn-retry-mode">解答方式を選び直す</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="credit">MADE BY NAGATSUKI</footer>
+
+  <!-- ▼ フィードバック（解答直後のシート） -->
+  <div class="feedback-overlay" id="feedback-overlay">
+    <div class="feedback-sheet">
+      <div class="fb-result" id="fb-result">正解</div>
+      <div class="fb-reading">正しい読み：<b id="fb-reading-text">ちみもうりょう</b></div>
+      <div class="fb-trivia-label">怪異の由来 / 雑学</div>
+      <div class="fb-trivia" id="fb-trivia-text">-</div>
+      <button class="btn-next" id="btn-next">次の漢字へ →</button>
+    </div>
+  </div>
+
+  <!-- ▼ クイズ中断の確認ダイアログ -->
+  <div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-sheet">
+      <div class="confirm-title">クイズを中断しますか？</div>
+      <div class="confirm-text">ホーム画面に戻ると、<br>ここまでの正解数は保存されません。</div>
+      <div class="confirm-actions">
+        <button class="btn-secondary" id="btn-confirm-cancel">続ける</button>
+        <button class="btn-start" id="btn-confirm-home">ホームへ戻る</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

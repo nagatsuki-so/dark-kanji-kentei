@@ -1,0 +1,516 @@
+  :root{
+    --bg-void:#08070a;
+    --bg-panel:#120e14;
+    --bg-panel-2:#1a1420;
+    --blood:#8b1a2b;
+    --blood-bright:#c92a3d;
+    --ash-purple:#3d1a4a;
+    --ash-purple-2:#5c2a6e;
+    --bone:#e9e2d3;
+    --bone-dim:#a89a8a;
+    --sick-green:#4a7c59;
+    --sick-green-bright:#6fbf7f;
+    --line:#2a2028;
+    --shadow-deep: 0 20px 60px rgba(0,0,0,0.7);
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:var(--bg-void);
+    color:var(--bone);
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    overscroll-behavior:none;
+  }
+
+  #app{
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* ---------- 背景演出：漂う霧・熾火 ---------- */
+  .fog-layer{
+    position:fixed;inset:-10% -10%;
+    pointer-events:none;
+    z-index:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 15%, rgba(61,26,74,0.35), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 85% 80%, rgba(139,26,43,0.22), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 50% 100%, rgba(92,42,110,0.18), transparent 65%);
+    animation: driftFog 22s ease-in-out infinite alternate;
+  }
+  @keyframes driftFog{
+    0%{ transform: translate(0,0) scale(1); }
+    100%{ transform: translate(-2%,3%) scale(1.05); }
+  }
+  .embers{
+    position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+  }
+  .ember{
+    position:absolute;bottom:-10px;
+    width:3px;height:3px;border-radius:50%;
+    background:var(--blood-bright);
+    box-shadow:0 0 6px 1px rgba(201,42,61,0.8);
+    opacity:0;
+    animation-name:emberRise;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+  }
+  @keyframes emberRise{
+    0%{ transform:translateY(0) translateX(0); opacity:0; }
+    8%{ opacity:0.9; }
+    90%{ opacity:0.3; }
+    100%{ transform:translateY(-110vh) translateX(20px); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .fog-layer, .ember{ animation:none !important; }
+  }
+
+  main{
+    position:relative;z-index:1;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    max-width:560px;
+    width:100%;
+    margin:0 auto;
+    padding:20px 18px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .screen{ display:none; flex-direction:column; flex:1; animation:fadeIn .5s ease; }
+  .screen.active{ display:flex; }
+  @keyframes fadeIn{ from{opacity:0; margin-top:6px;} to{opacity:1; margin-top:0;} }
+
+  /* ---------- 共通アイコンボタン（音声・ホーム等） ---------- */
+  .icon-btn{
+    background:none;border:1px solid var(--line);color:var(--bone-dim);
+    width:38px;height:38px;border-radius:100px;font-size:16px;cursor:pointer;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .15s ease, color .15s ease, transform .1s ease;
+  }
+  .icon-btn:active{ transform:scale(0.92); }
+
+  .sound-control{
+    position:absolute;
+    top:calc(14px + env(safe-area-inset-top));
+    right:14px;
+    z-index:15;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .bgm-label{
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--bone-dim);
+  }
+  .global-sound-btn{
+    background:rgba(18,14,20,0.7);
+    backdrop-filter:blur(4px);
+  }
+
+  /* ---------- タイトル画面 ---------- */
+  #screen-title, #screen-error{ justify-content:center; align-items:center; text-align:center; gap:28px; }
+  .glyph-guard{
+    font-family:'Yuji Syuku',serif;
+    font-size:100px;
+    color:var(--blood-bright);
+    text-shadow:0 0 22px rgba(201,42,61,0.55), 0 0 60px rgba(139,26,43,0.3);
+    line-height:1;
+  }
+  .title-block h1{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(30px,8vw,42px);
+    margin:0 0 10px;
+    letter-spacing:.04em;
+    color:var(--bone);
+    text-shadow:0 2px 18px rgba(0,0,0,0.8);
+  }
+  .title-block p.sub{
+    margin:0;
+    font-size:14px;
+    color:var(--bone-dim);
+    letter-spacing:.08em;
+  }
+  .seal-divider{
+    width:52px;height:1px;
+    background:linear-gradient(90deg, transparent, var(--blood), transparent);
+    margin:4px auto;
+  }
+  .btn-start{
+    font-family:'Yuji Syuku',serif;
+    font-size:17px;
+    letter-spacing:.12em;
+    padding:16px 44px;
+    min-height:56px;
+    background:linear-gradient(180deg, #2a1420, #1a0d14);
+    border:1px solid var(--blood);
+    color:var(--bone);
+    border-radius:4px;
+    box-shadow:0 0 0 1px rgba(139,26,43,0.15) inset, 0 10px 30px rgba(139,26,43,0.25);
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .2s ease;
+  }
+  .btn-start:active{ transform:scale(0.96); }
+  #screen-title .btn-start{ margin-top:24px; }
+  .title-hint{ font-size:12px; color:var(--bone-dim); opacity:.7; }
+
+  /* ---------- モード選択 ---------- */
+  #screen-mode{ justify-content:center; gap:16px; }
+  .mode-heading{
+    text-align:center; margin-bottom:6px;
+  }
+  .mode-heading h2{
+    font-family:'Yuji Syuku',serif;
+    font-size:22px; margin:0 0 6px; color:var(--bone);
+  }
+  .mode-heading p{ margin:0; font-size:13px; color:var(--bone-dim); }
+
+  .mode-card{
+    display:flex; flex-direction:column; gap:6px;
+    text-align:left;
+    padding:18px 20px;
+    min-height:76px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-left:3px solid var(--blood);
+    border-radius:6px;
+    color:var(--bone);
+    cursor:pointer;
+    transition:border-color .15s ease, transform .12s ease, background .15s ease;
+  }
+  .mode-card:active{ transform:scale(0.98); background:var(--bg-panel-2); }
+  .mode-card .m-title{ font-size:17px; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .mode-card .m-desc{ font-size:12.5px; color:var(--bone-dim); line-height:1.5; }
+  .mode-card .m-tag{
+    display:inline-block; font-size:10.5px; padding:2px 8px;
+    border:1px solid var(--ash-purple-2); border-radius:100px; color:var(--bone-dim);
+  }
+
+  .link-back{
+    margin-top:18px; text-align:center;
+    font-size:13px; color:var(--bone-dim);
+    background:none;border:none;cursor:pointer;padding:10px;
+    text-decoration:underline;text-underline-offset:3px;
+  }
+
+  /* ---------- クイズ画面 ---------- */
+  #screen-quiz{ justify-content:center; gap:18px; }
+  #screen-quiz .link-back{ margin-top:0; }
+  .quiz-topbar{
+    display:flex; align-items:center; justify-content:center;
+  }
+  .progress-wrap{ width:100%; }
+  .progress-label{ font-size:12px; color:var(--bone-dim); margin-bottom:6px; letter-spacing:.05em; text-align:center; }
+  .progress-track{
+    height:5px; border-radius:3px; background:var(--line); overflow:hidden;
+  }
+  .progress-fill{
+    height:100%; background:linear-gradient(90deg, var(--ash-purple-2), var(--blood-bright));
+    transition:width .4s ease;
+  }
+
+  .kanji-stage{
+    position:relative;
+    margin-top:6px;
+    padding:38px 16px 32px;
+    border-radius:8px;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% 30%, rgba(139,26,43,0.10), transparent 70%),
+      linear-gradient(180deg, var(--bg-panel), var(--bg-panel-2));
+    border:1px solid var(--line);
+    text-align:center;
+    overflow:hidden;
+  }
+  .kanji-stage::before{
+    content:"";
+    position:absolute; inset:0;
+    border:1px solid transparent;
+    box-shadow:0 0 0 1px rgba(139,26,43,0.12) inset;
+    pointer-events:none;
+  }
+  .kanji-main{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(52px, 17vw, 84px);
+    color:var(--bone);
+    text-shadow:0 0 30px rgba(139,26,43,0.35);
+    line-height:1.1;
+    word-break:keep-all;
+  }
+  .kanji-index{
+    margin-top:10px; font-size:11.5px; color:var(--bone-dim); letter-spacing:.1em;
+  }
+
+  .answer-zone{ display:flex; flex-direction:column; gap:10px; }
+
+  .choice-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  }
+  .choice-btn{
+    min-height:56px;
+    padding:12px 10px;
+    font-size:16px;
+    font-weight:500;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    color:var(--bone);
+    border-radius:6px;
+    cursor:pointer;
+    transition:transform .1s ease, border-color .15s ease, background .15s ease;
+    line-height:1.3;
+  }
+  .choice-btn:active{ transform:scale(0.97); }
+  .choice-btn.is-correct{ border-color:var(--sick-green-bright); background:rgba(74,124,89,0.18); }
+  .choice-btn.is-wrong{ border-color:var(--blood-bright); background:rgba(139,26,43,0.22); }
+  .choice-btn:disabled{ cursor:default; opacity:.85; }
+
+  .free-input-row{ display:flex; gap:8px; }
+  .free-input{
+    flex:1; min-height:52px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:6px;
+    color:var(--bone);
+    font-size:18px;
+    padding:0 14px;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+  }
+  .free-input:focus{ outline:none; border-color:var(--ash-purple-2); }
+  .btn-submit{
+    min-width:84px; min-height:52px;
+    background:linear-gradient(180deg,#2a1420,#1a0d14);
+    border:1px solid var(--blood);
+    color:var(--bone);
+    border-radius:6px;
+    font-size:15px;
+    cursor:pointer;
+  }
+  .btn-submit:disabled{ opacity:.4; }
+  .input-hint{ font-size:11.5px; color:var(--bone-dim); padding-left:2px; }
+
+  /* ---------- フィードバック ---------- */
+  .feedback-overlay{
+    position:fixed; inset:0; z-index:20;
+    display:flex; align-items:flex-end; justify-content:center;
+    background:rgba(4,3,5,0.55);
+    backdrop-filter:blur(2px);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .feedback-overlay.show{ opacity:1; pointer-events:auto; }
+  .feedback-sheet{
+    width:100%; max-width:560px;
+    background:var(--bg-panel-2);
+    border-top:1px solid var(--line);
+    border-radius:16px 16px 0 0;
+    padding:22px 20px calc(20px + env(safe-area-inset-bottom));
+    transform:translateY(16px);
+    transition:transform .25s ease;
+    max-height:80vh;
+    overflow-y:auto;
+  }
+  .feedback-overlay.show .feedback-sheet{ transform:translateY(0); }
+  .fb-result{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Yuji Syuku',serif;
+    font-size:22px; margin-bottom:14px;
+  }
+  .fb-result.correct{ color:var(--sick-green-bright); }
+  .fb-result.wrong{ color:var(--blood-bright); }
+  .fb-reading{
+    font-size:14px; color:var(--bone-dim); margin-bottom:16px;
+  }
+  .fb-reading b{ color:var(--bone); font-size:17px; font-weight:700; }
+  .fb-trivia-label{
+    font-size:11px; letter-spacing:.1em; color:#9166a8; margin-bottom:6px;
+  }
+  .fb-trivia{
+    font-size:14.5px; line-height:1.75; color:var(--bone);
+    padding:14px 16px;
+    background:var(--bg-panel);
+    border-left:2px solid var(--blood);
+    border-radius:4px;
+    margin-bottom:20px;
+  }
+  .btn-next{
+    width:100%; min-height:52px;
+    background:linear-gradient(180deg,#2a1420,#1a0d14);
+    border:1px solid var(--blood);
+    color:var(--bone); border-radius:6px; font-size:15.5px; cursor:pointer;
+    font-family:'Yuji Syuku',serif; letter-spacing:.08em;
+  }
+
+  /* ---------- 中断確認ダイアログ ---------- */
+  .confirm-overlay{
+    position:fixed; inset:0; z-index:30;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(4,3,5,0.65);
+    backdrop-filter:blur(2px);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease;
+    padding:20px;
+  }
+  .confirm-overlay.show{ opacity:1; pointer-events:auto; }
+  .confirm-sheet{
+    width:100%; max-width:320px;
+    background:var(--bg-panel-2);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:26px 22px;
+    text-align:center;
+    transform:scale(0.95);
+    transition:transform .2s ease;
+  }
+  .confirm-overlay.show .confirm-sheet{ transform:scale(1); }
+  .confirm-title{
+    font-family:'Yuji Syuku',serif; font-size:19px; color:var(--bone); margin-bottom:8px;
+  }
+  .confirm-text{ font-size:13px; color:var(--bone-dim); line-height:1.6; margin-bottom:22px; }
+  .confirm-actions{ display:flex; flex-direction:column; gap:10px; }
+  .confirm-actions .btn-start,
+  .confirm-actions .btn-secondary{
+    color:#cfc7bd;
+  }
+  .confirm-actions .btn-start{ padding:14px 20px; font-size:16px; }
+  .confirm-actions .btn-secondary{
+    font-family:'Yuji Syuku',serif;
+    font-size:16px;
+    letter-spacing:.12em;
+    padding:14px 20px;
+    background:var(--bg-panel-2);
+    border:1px solid var(--ash-purple-2);
+  }
+
+  /* ---------- 結果画面 ---------- */
+  #screen-result{ align-items:center; text-align:center; }
+  .link-back-corner{
+    position:absolute;
+    top:0; left:0;
+    margin-top:0;
+    text-align:left;
+    z-index:5;
+  }
+  .result-main{
+    flex:1;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+  }
+  .result-row{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    width:100%;
+    max-width:320px;
+    margin:0 auto;
+  }
+  .result-label{
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    width:5.5em;
+    text-align:right;
+    font-size:13px;
+    color:var(--bone-dim);
+    letter-spacing:.05em;
+    font-weight:400;
+    flex-shrink:0;
+  }
+  .result-label::after{ content:"："; }
+  .result-value{
+    font-family:'Yuji Syuku',serif;
+    font-size:26px;
+    color:var(--bone);
+    text-shadow:0 0 20px rgba(139,26,43,0.35);
+    text-align:left;
+  }
+  .result-glyph-block{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    width:100%;
+    margin-top:6px;
+  }
+  .result-glyph-big{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(64px, 24vw, 120px);
+    line-height:1;
+    color:var(--blood-bright);
+    text-shadow:0 0 30px rgba(201,42,61,0.6), 0 0 90px rgba(139,26,43,0.35);
+  }
+  /* 階級ごとの見た目差別化 */
+  .result-glyph-block[data-rank="seal"] .result-glyph-big{
+    color:#f0d98c;
+    text-shadow:0 0 34px rgba(240,217,140,0.7), 0 0 100px rgba(240,217,140,0.4);
+  }
+  .result-glyph-block[data-rank="oni"] .result-glyph-big{
+    color:var(--blood-bright);
+    text-shadow:0 0 30px rgba(201,42,61,0.6), 0 0 90px rgba(139,26,43,0.35);
+  }
+  .result-glyph-block[data-rank="rei"] .result-glyph-big{
+    color:#b98fd1;
+    text-shadow:0 0 26px rgba(150,90,190,0.5), 0 0 76px rgba(92,42,110,0.32);
+  }
+  .result-glyph-block[data-rank="noroi"] .result-glyph-big{
+    color:var(--sick-green-bright);
+    text-shadow:0 0 22px rgba(111,191,127,0.45), 0 0 64px rgba(74,124,89,0.3);
+  }
+  .result-actions{ display:flex; flex-direction:column; gap:16px; width:100%; max-width:280px; margin-top:0px; }
+  .result-actions .btn-start,
+  .result-actions .btn-secondary{
+    color:#cac5cf;
+  }
+  .result-actions .btn-secondary{
+    font-family:'Yuji Syuku',serif;
+    font-size:17px;
+    letter-spacing:.12em;
+    min-height:56px;
+    background:var(--bg-panel-2);
+    border:1px solid var(--ash-purple-2);
+  }
+  .btn-secondary{
+    min-height:50px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    color:var(--bone-dim);
+    border-radius:6px; font-size:14px; cursor:pointer;
+  }
+
+  footer.credit{
+    position:relative;z-index:1;
+    text-align:center; font-size:10.5px; color:var(--bone-dim);
+    padding:10px 0 16px;
+  }
+
+  @media (min-width:600px){
+    .kanji-main{ font-size:88px; }
+  }
+
+  /* ---------- PC(デスクトップ)：ウィンドウ中央にアプリを配置 ---------- */
+  @media (min-width:720px){
+    html,body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:radial-gradient(ellipse 80% 60% at 50% 40%, #150f18, #050408 70%);
+    }
+    #app{
+      width:480px;
+      max-width:480px;
+      height:min(880px, 94vh);
+      min-height:auto;
+      border-radius:20px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-deep), 0 0 0 1px rgba(139,26,43,0.08);
+      overflow-y:auto;
+      overflow-x:hidden;
+    }
+  }

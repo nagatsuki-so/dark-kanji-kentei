@@ -3,16 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ダーク漢字検定 〜怪異・呪術・難読漢字〜</title>
+<title>宵闇漢字解奇譚</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<!-- 怪異演出「呪」専用の筆文字フォント。使う文字（呪貴方ノ身体オ終イ）の分だけを読み込む -->
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Boku&text=%E5%91%AA%E8%B2%B4%E6%96%B9%E3%83%8E%E8%BA%AB%E4%BD%93%E3%82%AA%E7%B5%82%E3%82%A4&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div id="app">
   <div class="fog-layer"></div>
   <div class="embers" id="embers"></div>
+  <!-- ▼ 怪異演出：段階2の背景（赤い闇）。#app.kaii-active の間だけ表示 -->
+  <div class="kaii-bg" aria-hidden="true"></div>
   <div class="sound-control">
     <span class="bgm-label">BGM</span>
     <button class="icon-btn global-sound-btn" id="btn-mute" title="音声のON/OFF">🔊</button>
@@ -22,11 +26,12 @@
 
     <!-- ▼ タイトル画面 -->
     <section id="screen-title" class="screen active">
-      <div class="glyph-guard">魑</div>
+      <div class="glyph-guard glyph-candle">魑</div>
       <div class="title-block">
-        <h1>ダーク漢字検定</h1>
+        <!-- 「解」が不規則に一瞬だけ「怪」に入れ替わる（app.js）。読み上げは常に正式名称にする -->
+        <h1 aria-label="宵闇漢字解奇譚"><span aria-hidden="true">宵闇漢字<span class="title-flicker" id="title-flicker">解</span>奇譚</span></h1>
         <div class="seal-divider"></div>
-        <p class="sub">怪異・呪術・難読漢字</p>
+        <p class="sub title-overview">怪異、呪術、宗教等にまつわる<br>漢字の読みを当てる奇譚。<br>"怪異乱入"時、心してかかるように――</p>
       </div>
       <button class="btn-start" id="btn-open-seal">封を解く</button>
       <p class="title-hint" id="title-hint"></p>
@@ -42,19 +47,63 @@
       <button class="btn-start" id="btn-retry-load">再度試みる</button>
     </section>
 
-    <!-- ▼ モード選択画面 -->
+    <!-- ▼ モード選択画面（出題設定） -->
     <section id="screen-mode" class="screen">
       <div class="mode-heading">
-        <h2>解答方式を選択</h2>
+        <h2>出題設定</h2>
+        <button class="link-info" id="btn-mode-info">各項目について</button>
       </div>
-      <button class="mode-card" data-mode="choice">
-        <span class="m-title">選択方式 <span class="m-tag">初級</span></span>
-        <span class="m-desc">4つの読みから正解を選ぶ。サクサク進める入門編。</span>
-      </button>
-      <button class="mode-card" data-mode="free">
-        <span class="m-title">入力方式 <span class="m-tag">上級</span></span>
-        <span class="m-desc">読み方を自分で打ち込む。ひらがな・カタカナどちらでも可。</span>
-      </button>
+
+      <div class="option-group" id="group-count">
+        <div class="option-group-label">問題数</div>
+        <div class="option-row">
+          <button class="option-pill" data-value="5">五問</button>
+          <button class="option-pill selected" data-value="10">十問</button>
+          <button class="option-pill" data-value="15">十五問</button>
+          <div class="option-pill-wrap">
+            <button class="option-pill" data-value="all-diff">全問：鬼</button>
+            <div class="option-pill-caption" id="count-all-diff"></div>
+          </div>
+          <div class="option-pill-wrap">
+            <button class="option-pill option-pill-glow" data-value="all">全問：忌</button>
+            <div class="option-pill-caption" id="count-all"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="option-group" id="group-difficulty">
+        <div class="option-group-label">難易度</div>
+        <div class="option-row">
+          <button class="option-pill" data-value="easy">易しい</button>
+          <button class="option-pill selected" data-value="normal">普通</button>
+          <button class="option-pill" data-value="hard">難しい</button>
+        </div>
+      </div>
+
+      <div class="option-group" id="group-format">
+        <div class="option-group-label">解答形式</div>
+        <div class="format-cards">
+          <button class="mode-card selected" data-value="choice">
+            <span class="m-title">選択</span>
+          </button>
+          <button class="mode-card" data-value="free">
+            <span class="m-title">入力</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="option-group" id="group-kaii">
+        <div class="option-group-label">怪異乱入</div>
+        <div class="option-row">
+          <div class="option-pill-wrap">
+            <button class="option-pill" data-value="on">あり</button>
+            <div class="option-pill-caption" id="kaii-rate-sub"></div>
+          </div>
+          <button class="option-pill selected" data-value="off">なし</button>
+        </div>
+      </div>
+
+      <button class="btn-start" id="btn-mode-start">この設定で始める</button>
       <button class="link-back link-back-corner" id="btn-mode-back">タイトルへ戻る</button>
     </section>
 
@@ -72,6 +121,12 @@
       <div class="kanji-stage">
         <div class="kanji-main" id="kanji-main">魑魅魍魎</div>
         <div class="kanji-index" id="kanji-index-label">この漢字の読みは？</div>
+      </div>
+
+      <!-- 怪異演出時のみ表示される制限時間（残り秒数を旧字体の漢数字で表示） -->
+      <div class="kaii-timer" id="kaii-timer">
+        <div class="kaii-timer-num" id="kaii-timer-num">漆</div>
+        <div class="kaii-timer-track"><div class="kaii-timer-fill" id="kaii-timer-fill"></div></div>
       </div>
 
       <div class="answer-zone">
@@ -97,8 +152,8 @@
         </div>
       </div>
       <div class="result-actions">
-        <button class="btn-start" id="btn-retry-same">同じ形式で再挑戦</button>
-        <button class="btn-secondary" id="btn-retry-mode">解答方式を選び直す</button>
+        <button class="btn-start" id="btn-retry-same">同じ出題設定で再挑戦</button>
+        <button class="btn-secondary" id="btn-retry-mode">出題設定を選び直す</button>
       </div>
     </section>
 
@@ -106,10 +161,31 @@
 
   <footer class="credit">MADE BY NAGATSUKI</footer>
 
+  <!-- ▼ 怪異演出：段階2の前面ノイズ（操作を妨げないよう pointer-events:none） -->
+  <div class="kaii-ambient" aria-hidden="true">
+    <video class="kaii-static" data-kaii-video src="assets/kaii/static.mp4" muted loop playsinline preload="none"></video>
+    <div class="ka-scan"></div>
+    <div class="ka-tear"></div>
+    <div class="ka-vignette"></div>
+  </div>
+  <!-- ▼ 怪異演出：時間内に正解した時の「祓い」の光 -->
+  <div class="kaii-purify" id="kaii-purify" aria-hidden="true"></div>
+
   <!-- ▼ フィードバック（解答直後のシート） -->
   <div class="feedback-overlay" id="feedback-overlay">
     <div class="feedback-sheet">
+      <div class="fb-drips" aria-hidden="true">
+        <span style="--x:7%;--w:7px;--h:22px;--d:.05s"></span>
+        <span style="--x:19%;--w:10px;--h:34px;--d:.2s"></span>
+        <span style="--x:33%;--w:6px;--h:16px;--d:.1s"></span>
+        <span style="--x:48%;--w:9px;--h:28px;--d:.35s"></span>
+        <span style="--x:61%;--w:5px;--h:14px;--d:.15s"></span>
+        <span style="--x:74%;--w:11px;--h:38px;--d:.28s"></span>
+        <span style="--x:88%;--w:7px;--h:20px;--d:.08s"></span>
+      </div>
+      <div class="fb-seal" aria-hidden="true">祓</div>
       <div class="fb-result" id="fb-result">正解</div>
+      <div class="fb-kaii-note" id="fb-kaii-note"></div>
       <div class="fb-reading">正しい読み：<b id="fb-reading-text">ちみもうりょう</b></div>
       <div class="fb-trivia-label">怪異の由来 / 雑学</div>
       <div class="fb-trivia" id="fb-trivia-text">-</div>
@@ -128,6 +204,101 @@
       </div>
     </div>
   </div>
+
+  <!-- ▼ 出題設定：各項目の説明モーダル -->
+  <div class="info-overlay" id="info-overlay">
+    <div class="info-sheet">
+      <div class="info-title">各項目について</div>
+      <div class="info-item">
+        <div class="info-item-title">問題数</div>
+        <div class="info-item-desc">出題される漢字の数。「全問：鬼」は選んでいる難易度の問題を、「全問：忌」は難易度を問わず収録された問題を全て出題する。</div>
+        <div class="info-item-stats" id="info-stats-count"></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-title">難易度</div>
+        <div class="info-item-desc">出題される漢字の読みにくさの目安。「全問：忌」を選んでいる間はこの項目は使用されない。</div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-title">解答形式</div>
+        <div class="info-item-desc">「選択」は4つの読みから正解を選ぶ方式、「入力」は読みを自分で打ち込む方式。</div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-title">怪異乱入</div>
+        <div class="info-item-desc">「あり」にすると、出題中にプレイヤーを驚かせる怪異の演出が発生することがある。難易度に応じて発生確率が異なる。</div>
+        <div class="info-item-stats" id="info-stats-kaii"></div>
+      </div>
+      <button class="btn-secondary" id="btn-info-close">閉じる</button>
+    </div>
+  </div>
+
+  <!-- ▼ 怪異演出：段階1（予兆）。次の問題が表示される前に全画面で覆う -->
+  <div class="kaii-omen" id="kaii-omen" aria-hidden="true">
+    <div class="ko-red"></div>
+    <video class="kaii-static" data-kaii-video src="assets/kaii/static.mp4" muted loop playsinline preload="none"></video>
+    <div class="ko-slices"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="ko-text">―來る</div>
+  </div>
+
+  <!-- ▼ 怪異演出：段階3（罰）。data-variant で4種類のうち1つを表示する -->
+  <div class="kaii-punish" id="kaii-punish" aria-hidden="true">
+
+    <!-- 1. 赤い目 -->
+    <!-- 素材：Pexels 12041905（赤く染めて加工） -->
+    <!-- 流れ：目が見開く動画 → 閉じた目が無数に並ぶ／黒画面を不規則に繰り返す → 開いた目が無数に並ぶ（data-phase・data-stateで切替） -->
+    <div class="kp-scene kp-eye" id="kp-eye" data-phase="video">
+      <div class="kp-eye-shake">
+        <video class="kp-video kp-eye-video" id="kp-eye-video" data-kaii-video src="assets/kaii/eye.mp4" muted playsinline preload="none"></video>
+      </div>
+      <!-- 目の画像を画面いっぱいのマス目に敷き詰める（マスはJSで生成） -->
+      <div class="kp-eye-grid" id="kp-eye-grid" data-state="off"></div>
+    </div>
+
+    <!-- 2. 白い女（砂嵐越しに約4秒じっと見つめてくる） -->
+    <!-- 素材：Mixkit 44227（顔の周りを切り抜いて加工） -->
+    <div class="kp-scene kp-face">
+      <div class="kp-face-wrap">
+        <video class="kp-video kp-face-video" id="kp-face-video" data-kaii-video src="assets/kaii/face.mp4" muted playsinline preload="none"></video>
+      </div>
+      <video class="kaii-static" data-kaii-video src="assets/kaii/static.mp4" muted loop playsinline preload="none"></video>
+    </div>
+
+    <!-- 3. 呪（文字はJSで生成して画面を埋め尽くす） -->
+    <!-- 流れ：暗闇 → 赤い墨の「呪」が増えていく → 真っ赤な画面 → 「貴方ノ身体　オ終イ」 → 静止画（data-phaseで切替） -->
+    <!-- 静止画の素材：Mixkit 44227（白い女と同じ素材の1コマ） -->
+    <div class="kp-scene kp-curse" id="kp-curse">
+      <div class="kp-curse-layer" id="kp-curse-layer"></div>
+      <div class="kp-curse-message">貴方ノ身体　オ終イ</div>
+      <img class="kp-curse-still" src="assets/kaii/curse_still.jpg" alt="">
+    </div>
+
+    <!-- 4. 陰陽師の霊（祝詞 → 歪み → 無音の闇 → 般若心経） -->
+    <!-- 素材：煙＝Mixkit 1968（青く染めて加工）／肖像＝菊池容斎『前賢故実』安倍晴明（パブリックドメイン。白黒反転して加工） -->
+    <div class="kp-scene kp-onmyoji" id="kp-onmyoji">
+      <video class="kp-video kp-smoke-video" id="kp-smoke-video" data-kaii-video src="assets/kaii/smoke.mp4" muted loop playsinline preload="none"></video>
+      <div class="kp-mist"><span></span><span></span><span></span></div>
+      <div class="kp-frost" id="kp-frost"></div>
+      <div class="kp-ghost">
+        <img class="kp-ghost-img" src="assets/kaii/seimei.png" alt="">
+        <!-- 絵の晴明は目を閉じているため、祝詞の途中でその位置に光を灯す（位置は画像に対する%） -->
+        <span class="kp-ghost-eye" style="left:44.6%;top:29.9%"></span>
+        <span class="kp-ghost-eye" style="left:48.2%;top:29.5%"></span>
+      </div>
+      <div class="kp-sutra" id="kp-sutra"></div>
+    </div>
+  </div>
+
+  <!-- ▼ 怪異演出：画面を歪ませるSVGフィルタ（陰陽師の霊で使用。scaleをJSで動かす） -->
+  <svg class="kaii-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <!-- 「呪」の輪郭を細かく揺らがせ、筆で書いたようなガタつきを出すフィルタ -->
+    <filter id="kaii-ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="inkNoise"/>
+      <feDisplacementMap in="SourceGraphic" in2="inkNoise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="kaii-warp" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence id="kaii-warp-noise" type="fractalNoise" baseFrequency="0.008 0.03" numOctaves="2" seed="7" result="warpNoise"/>
+      <feDisplacementMap id="kaii-warp-map" in="SourceGraphic" in2="warpNoise" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
 
 </div>
 

@@ -1,0 +1,84 @@
+  /* ============================================================
+     結果画面（#screen-result）
+     ============================================================ */
+  #screen-result{ align-items:center; text-align:center; }
+  .result-main{
+    flex:1;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+  }
+  .result-row{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    width:100%;
+    max-width:320px;
+    margin:0 auto;
+  }
+  .result-label{
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    width:5.5em;
+    text-align:right;
+    font-size:13px;
+    color:var(--bone-dim);
+    letter-spacing:.05em;
+    font-weight:400;
+    flex-shrink:0;
+  }
+  .result-label::after{ content:"："; }
+  .result-value{
+    font-family:'Yuji Syuku',serif;
+    font-size:26px;
+    color:var(--bone);
+    text-shadow:0 0 20px rgba(139,26,43,0.35);
+    text-align:left;
+  }
+  .result-glyph-block{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    width:100%;
+    margin-top:6px;
+  }
+  .result-glyph-big{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(64px, 24vw, 120px);
+    line-height:1;
+    color:var(--blood-bright);
+    text-shadow:0 0 30px rgba(201,42,61,0.6), 0 0 90px rgba(139,26,43,0.35);
+  }
+  /* 階級ごとの見た目差別化 */
+  .result-glyph-block[data-rank="seal"] .result-glyph-big{
+    color:#f0d98c;
+    text-shadow:0 0 34px rgba(240,217,140,0.7), 0 0 100px rgba(240,217,140,0.4);
+  }
+  .result-glyph-block[data-rank="oni"] .result-glyph-big{
+    color:var(--blood-bright);
+    text-shadow:0 0 30px rgba(201,42,61,0.6), 0 0 90px rgba(139,26,43,0.35);
+  }
+  .result-glyph-block[data-rank="rei"] .result-glyph-big{
+    color:#b98fd1;
+    text-shadow:0 0 26px rgba(150,90,190,0.5), 0 0 76px rgba(92,42,110,0.32);
+  }
+  .result-glyph-block[data-rank="noroi"] .result-glyph-big{
+    color:var(--sick-green-bright);
+    text-shadow:0 0 22px rgba(111,191,127,0.45), 0 0 64px rgba(74,124,89,0.3);
+  }
+  .result-actions{ display:flex; flex-direction:column; gap:16px; width:100%; max-width:280px; margin-top:0px; }
+  .result-actions .btn-start,
+  .result-actions .btn-secondary{
+    color:#cac5cf;
+  }
+  .result-actions .btn-secondary{
+    font-family:'Yuji Syuku',serif;
+    font-size:17px;
+    letter-spacing:.12em;
+    min-height:56px;
+    background:var(--bg-panel-2);
+    border:1px solid var(--ash-purple-2);
+  }

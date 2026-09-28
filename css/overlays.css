@@ -1,0 +1,139 @@
+  /* ============================================================
+     重ねて表示する画面：解答後の結果シート・中断確認ダイアログ・出題設定の説明モーダル
+     ※怪異乱入時の結果シートの見た目は kaii.css
+     ============================================================ */
+
+  /* ---------- フィードバック（解答直後のシート） ---------- */
+  .feedback-overlay{
+    position:fixed; inset:0; z-index:20;
+    display:flex; align-items:flex-end; justify-content:center;
+    background:rgba(4,3,5,0.55);
+    backdrop-filter:blur(2px);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .feedback-overlay.show{ opacity:1; pointer-events:auto; }
+  .feedback-sheet{
+    width:100%; max-width:560px;
+    background:var(--bg-panel-2);
+    border-top:1px solid var(--line);
+    border-radius:16px 16px 0 0;
+    padding:22px 20px calc(20px + env(safe-area-inset-bottom));
+    transform:translateY(16px);
+    transition:transform .25s ease;
+    max-height:80vh;
+    overflow-y:auto;
+  }
+  .feedback-overlay.show .feedback-sheet{ transform:translateY(0); }
+  .fb-result{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Yuji Syuku',serif;
+    font-size:22px; margin-bottom:14px;
+  }
+  .fb-result.correct{ color:var(--sick-green-bright); }
+  .fb-result.wrong{ color:var(--blood-bright); }
+  .fb-reading{
+    font-size:14px; color:var(--bone-dim); margin-bottom:16px;
+  }
+  .fb-reading b{ color:var(--bone); font-size:17px; font-weight:700; }
+  .fb-trivia-label{
+    font-size:11px; letter-spacing:.1em; color:#9166a8; margin-bottom:6px;
+  }
+  .fb-trivia{
+    font-size:14.5px; line-height:1.75; color:var(--bone);
+    padding:14px 16px;
+    background:var(--bg-panel);
+    border-left:2px solid var(--blood);
+    border-radius:4px;
+    margin-bottom:20px;
+  }
+  .btn-next{
+    width:100%; min-height:52px;
+    background:linear-gradient(180deg,#2a1420,#1a0d14);
+    border:1px solid var(--blood);
+    color:var(--bone); border-radius:6px; font-size:15.5px; cursor:pointer;
+    font-family:'Yuji Syuku',serif; letter-spacing:.08em;
+  }
+
+  /* ---------- 中断確認ダイアログ ---------- */
+  .confirm-overlay{
+    position:fixed; inset:0; z-index:30;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(4,3,5,0.65);
+    backdrop-filter:blur(2px);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease;
+    padding:20px;
+  }
+  .confirm-overlay.show{ opacity:1; pointer-events:auto; }
+  .confirm-sheet{
+    width:100%; max-width:320px;
+    background:var(--bg-panel-2);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:26px 22px;
+    text-align:center;
+    transform:scale(0.95);
+    transition:transform .2s ease;
+  }
+  .confirm-overlay.show .confirm-sheet{ transform:scale(1); }
+  .confirm-title{
+    font-family:'Yuji Syuku',serif; font-size:19px; color:var(--bone); margin-bottom:8px;
+  }
+  .confirm-text{ font-size:13px; color:var(--bone-dim); line-height:1.6; margin-bottom:22px; }
+  .confirm-actions{ display:flex; flex-direction:column; gap:10px; }
+  .confirm-actions .btn-start,
+  .confirm-actions .btn-secondary{
+    color:#cfc7bd;
+  }
+  .confirm-actions .btn-start{ padding:14px 20px; font-size:16px; }
+  .confirm-actions .btn-secondary{
+    font-family:'Yuji Syuku',serif;
+    font-size:16px;
+    letter-spacing:.12em;
+    padding:14px 20px;
+    background:var(--bg-panel-2);
+    border:1px solid var(--ash-purple-2);
+  }
+
+  /* ---------- 出題設定：各項目の説明モーダル ---------- */
+  .info-overlay{
+    position:fixed; inset:0; z-index:30;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(4,3,5,0.65);
+    backdrop-filter:blur(2px);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease;
+    padding:20px;
+  }
+  .info-overlay.show{ opacity:1; pointer-events:auto; }
+  .info-sheet{
+    width:100%; max-width:400px;
+    max-height:80vh;
+    overflow-y:auto;
+    background:var(--bg-panel-2);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:24px 22px;
+    text-align:left;
+    transform:scale(0.95);
+    transition:transform .2s ease;
+  }
+  .info-overlay.show .info-sheet{ transform:scale(1); }
+  .info-title{
+    font-family:'Yuji Syuku',serif; font-size:19px; color:var(--bone);
+    text-align:center; margin-bottom:18px;
+  }
+  .info-item{ margin-bottom:16px; }
+  .info-item-title{
+    font-family:'Yuji Syuku',serif; font-size:15px; color:#c9a3e0; margin-bottom:4px;
+  }
+  .info-item-desc{
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    font-size:13px; color:var(--bone-dim); line-height:1.7;
+  }
+  .info-item-stats{
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    font-size:13px; color:var(--bone-dim); line-height:1.7; margin-top:6px;
+  }
+  .info-sheet .btn-secondary{ width:100%; margin-top:6px; }

@@ -1,0 +1,32 @@
+<!-- ▼ クイズ画面 -->
+<section id="screen-quiz" class="screen">
+  <button class="link-back link-back-corner" id="btn-quiz-home">タイトルへ戻る</button>
+
+  <div class="quiz-topbar">
+    <div class="progress-wrap">
+      <div class="progress-label" id="progress-label">問 1 / 10 ・ 正解 0</div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="kanji-stage">
+    <div class="kanji-main" id="kanji-main">魑魅魍魎</div>
+    <div class="kanji-index" id="kanji-index-label">この漢字の読みは？</div>
+  </div>
+
+  <!-- 怪異演出時のみ表示される制限時間（残り秒数を旧字体の漢数字で表示） -->
+  <div class="kaii-timer" id="kaii-timer">
+    <div class="kaii-timer-num" id="kaii-timer-num">漆</div>
+    <div class="kaii-timer-track"><div class="kaii-timer-fill" id="kaii-timer-fill"></div></div>
+  </div>
+
+  <div class="answer-zone">
+    <div class="choice-grid" id="choice-grid"></div>
+
+    <div class="free-input-row" id="free-input-row" style="display:none;">
+      <input type="text" class="free-input" id="free-input" placeholder="よみを入力" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="btn-submit" id="btn-submit">判定</button>
+    </div>
+    <div class="input-hint" id="free-hint" style="display:none;">送り仮名の有無・全角/半角・スペース・カナ表記の違いは自動で吸収されます</div>
+  </div>
+</section>

@@ -1,0 +1,87 @@
+<!-- ============================================================
+     怪異演出（css/kaii.css・js/kaii.js）
+     ※制限時間の表示（#kaii-timer）はクイズ画面の中にあるため html/screens/quiz.html に置いている
+     ============================================================ -->
+
+<!-- ▼ 段階2の背景（赤い闇）。#app.kaii-active の間だけ表示 -->
+<div class="kaii-bg" aria-hidden="true"></div>
+
+<!-- ▼ 段階2の前面ノイズ（操作を妨げないよう pointer-events:none） -->
+<div class="kaii-ambient" aria-hidden="true">
+  <video class="kaii-static" data-kaii-video src="assets/kaii/static.mp4" muted loop playsinline preload="none"></video>
+  <div class="ka-scan"></div>
+  <div class="ka-tear"></div>
+  <div class="ka-vignette"></div>
+</div>
+<!-- ▼ 時間内に正解した時の「祓い」の光 -->
+<div class="kaii-purify" id="kaii-purify" aria-hidden="true"></div>
+
+<!-- ▼ 段階1（予兆）。次の問題が表示される前に全画面で覆う -->
+<div class="kaii-omen" id="kaii-omen" aria-hidden="true">
+  <div class="ko-red"></div>
+  <video class="kaii-static" data-kaii-video src="assets/kaii/static.mp4" muted loop playsinline preload="none"></video>
+  <div class="ko-slices"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="ko-text">―來る</div>
+</div>
+
+<!-- ▼ 段階3（罰）。data-variant で4種類のうち1つを表示する -->
+<div class="kaii-punish" id="kaii-punish" aria-hidden="true">
+
+  <!-- 1. 赤い目 -->
+  <!-- 素材：Pexels 12041905（赤く染めて加工） -->
+  <!-- 流れ：目が見開く動画 → 閉じた目が無数に並ぶ／黒画面を不規則に繰り返す → 開いた目が無数に並ぶ（data-phase・data-stateで切替） -->
+  <div class="kp-scene kp-eye" id="kp-eye" data-phase="video">
+    <div class="kp-eye-shake">
+      <video class="kp-video kp-eye-video" id="kp-eye-video" data-kaii-video src="assets/kaii/eye.mp4" muted playsinline preload="none"></video>
+    </div>
+    <!-- 目の画像を画面いっぱいのマス目に敷き詰める（マスはJSで生成） -->
+    <div class="kp-eye-grid" id="kp-eye-grid" data-state="off"></div>
+  </div>
+
+  <!-- 2. 白い女（砂嵐越しに約4秒じっと見つめてくる） -->
+  <!-- 素材：Mixkit 44227（顔の周りを切り抜いて加工） -->
+  <div class="kp-scene kp-face">
+    <div class="kp-face-wrap">
+      <video class="kp-video kp-face-video" id="kp-face-video" data-kaii-video src="assets/kaii/face.mp4" muted playsinline preload="none"></video>
+    </div>
+    <video class="kaii-static" data-kaii-video src="assets/kaii/static.mp4" muted loop playsinline preload="none"></video>
+  </div>
+
+  <!-- 3. 呪（文字はJSで生成して画面を埋め尽くす） -->
+  <!-- 流れ：暗闇 → 赤い墨の「呪」が増えていく → 真っ赤な画面 → 「貴方ノ身体　オ終イ」 → 静止画（data-phaseで切替） -->
+  <!-- 静止画の素材：Mixkit 44227（白い女と同じ素材の1コマ） -->
+  <div class="kp-scene kp-curse" id="kp-curse">
+    <div class="kp-curse-layer" id="kp-curse-layer"></div>
+    <div class="kp-curse-message">貴方ノ身体　オ終イ</div>
+    <img class="kp-curse-still" src="assets/kaii/curse_still.jpg" alt="">
+  </div>
+
+  <!-- 4. 陰陽師の霊（祝詞 → 歪み → 無音の闇 → 般若心経） -->
+  <!-- 素材：煙＝Mixkit 1968（青く染めて加工）／肖像＝菊池容斎『前賢故実』安倍晴明（パブリックドメイン。白黒反転して加工） -->
+  <div class="kp-scene kp-onmyoji" id="kp-onmyoji">
+    <video class="kp-video kp-smoke-video" id="kp-smoke-video" data-kaii-video src="assets/kaii/smoke.mp4" muted loop playsinline preload="none"></video>
+    <div class="kp-mist"><span></span><span></span><span></span></div>
+    <div class="kp-frost" id="kp-frost"></div>
+    <div class="kp-ghost">
+      <img class="kp-ghost-img" src="assets/kaii/seimei.png" alt="">
+      <!-- 絵の晴明は目を閉じているため、祝詞の途中でその位置に光を灯す（位置は画像に対する%） -->
+      <span class="kp-ghost-eye" style="left:44.6%;top:29.9%"></span>
+      <span class="kp-ghost-eye" style="left:48.2%;top:29.5%"></span>
+    </div>
+    <div class="kp-sutra" id="kp-sutra"></div>
+  </div>
+</div>
+
+<!-- ▼ 画面を歪ませるSVGフィルタ -->
+<svg class="kaii-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <!-- 「呪」の輪郭を細かく揺らがせ、筆で書いたようなガタつきを出すフィルタ -->
+  <filter id="kaii-ink" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="inkNoise"/>
+    <feDisplacementMap in="SourceGraphic" in2="inkNoise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <!-- 陰陽師の霊で画面を波打たせるフィルタ（scaleをJSで動かす） -->
+  <filter id="kaii-warp" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence id="kaii-warp-noise" type="fractalNoise" baseFrequency="0.008 0.03" numOctaves="2" seed="7" result="warpNoise"/>
+    <feDisplacementMap id="kaii-warp-map" in="SourceGraphic" in2="warpNoise" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>

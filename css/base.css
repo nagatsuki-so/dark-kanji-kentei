@@ -1,0 +1,187 @@
+  /* ============================================================
+     共通スタイル：色の変数、背景（霧・熾火）、画面の枠組み、共通ボタン、フッター、PC表示
+     ============================================================ */
+  :root{
+    --bg-void:#08070a;
+    --bg-panel:#120e14;
+    --bg-panel-2:#1a1420;
+    --blood:#8b1a2b;
+    --blood-bright:#c92a3d;
+    --ash-purple:#3d1a4a;
+    --ash-purple-2:#5c2a6e;
+    --bone:#e9e2d3;
+    --bone-dim:#a89a8a;
+    --sick-green:#4a7c59;
+    --sick-green-bright:#6fbf7f;
+    --line:#2a2028;
+    --shadow-deep: 0 20px 60px rgba(0,0,0,0.7);
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:var(--bg-void);
+    color:var(--bone);
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    overscroll-behavior:none;
+  }
+
+  #app{
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* ---------- 背景演出：漂う霧・熾火 ---------- */
+  .fog-layer{
+    position:fixed;inset:-10% -10%;
+    pointer-events:none;
+    z-index:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 15%, rgba(61,26,74,0.35), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 85% 80%, rgba(139,26,43,0.22), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 50% 100%, rgba(92,42,110,0.18), transparent 65%);
+    animation: driftFog 22s ease-in-out infinite alternate;
+  }
+  @keyframes driftFog{
+    0%{ transform: translate(0,0) scale(1); }
+    100%{ transform: translate(-2%,3%) scale(1.05); }
+  }
+  .embers{
+    position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+  }
+  .ember{
+    position:absolute;bottom:-10px;
+    width:3px;height:3px;border-radius:50%;
+    background:var(--blood-bright);
+    box-shadow:0 0 6px 1px rgba(201,42,61,0.8);
+    opacity:0;
+    animation-name:emberRise;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+  }
+  @keyframes emberRise{
+    0%{ transform:translateY(0) translateX(0); opacity:0; }
+    8%{ opacity:0.9; }
+    90%{ opacity:0.3; }
+    100%{ transform:translateY(-110vh) translateX(20px); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .fog-layer, .ember{ animation:none !important; }
+  }
+
+  main{
+    position:relative;z-index:1;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    max-width:560px;
+    width:100%;
+    margin:0 auto;
+    padding:20px 18px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .screen{ display:none; flex-direction:column; flex:1; animation:fadeIn .5s ease; }
+  .screen.active{ display:flex; }
+  @keyframes fadeIn{ from{opacity:0; margin-top:6px;} to{opacity:1; margin-top:0;} }
+
+  /* ---------- 共通アイコンボタン（音声・ホーム等） ---------- */
+  .icon-btn{
+    background:none;border:1px solid var(--line);color:var(--bone-dim);
+    width:38px;height:38px;border-radius:100px;font-size:16px;cursor:pointer;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .15s ease, color .15s ease, transform .1s ease;
+  }
+  .icon-btn:active{ transform:scale(0.92); }
+
+  .sound-control{
+    position:absolute;
+    top:calc(14px + env(safe-area-inset-top));
+    right:14px;
+    z-index:15;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .bgm-label{
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--bone-dim);
+  }
+  .global-sound-btn{
+    background:rgba(18,14,20,0.7);
+    backdrop-filter:blur(4px);
+  }
+
+  /* ---------- 共通ボタン ---------- */
+  .btn-start{
+    font-family:'Yuji Syuku',serif;
+    font-size:17px;
+    letter-spacing:.12em;
+    padding:16px 44px;
+    min-height:56px;
+    background:linear-gradient(180deg, #2a1420, #1a0d14);
+    border:1px solid var(--blood);
+    color:var(--bone);
+    border-radius:4px;
+    box-shadow:0 0 0 1px rgba(139,26,43,0.15) inset, 0 10px 30px rgba(139,26,43,0.25);
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .2s ease;
+  }
+  .btn-start:active{ transform:scale(0.96); }
+
+  .btn-secondary{
+    min-height:50px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    color:var(--bone-dim);
+    border-radius:6px; font-size:14px; cursor:pointer;
+  }
+
+  /* 「タイトルへ戻る」リンク */
+  .link-back{
+    margin-top:18px; text-align:center;
+    font-size:13px; color:var(--bone-dim);
+    background:none;border:none;cursor:pointer;padding:10px;
+    text-decoration:underline;text-underline-offset:3px;
+  }
+  .link-back-corner{
+    position:absolute;
+    top:0; left:0;
+    margin-top:0;
+    text-align:left;
+    z-index:5;
+  }
+
+  /* ---------- フッター ---------- */
+  footer.credit{
+    position:relative;z-index:1;
+    text-align:center; font-size:10.5px; color:var(--bone-dim);
+    padding:0px 0 25px;
+  }
+
+  /* ---------- PC(デスクトップ)：ウィンドウ中央にアプリを配置 ---------- */
+  @media (min-width:720px){
+    html,body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:radial-gradient(ellipse 80% 60% at 50% 40%, #150f18, #050408 70%);
+    }
+    #app{
+      width:480px;
+      max-width:480px;
+      height:min(880px, 94vh);
+      min-height:auto;
+      border-radius:20px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-deep), 0 0 0 1px rgba(139,26,43,0.08);
+      overflow-y:auto;
+      overflow-x:hidden;
+    }
+  }

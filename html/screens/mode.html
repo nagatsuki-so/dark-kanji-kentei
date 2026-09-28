@@ -1,0 +1,59 @@
+<!-- ▼ モード選択画面（出題設定） -->
+<section id="screen-mode" class="screen">
+  <div class="mode-heading">
+    <h2>出題設定</h2>
+    <button class="link-info" id="btn-mode-info">各項目について</button>
+  </div>
+
+  <div class="option-group" id="group-count">
+    <div class="option-group-label">問題数</div>
+    <div class="option-row">
+      <button class="option-pill" data-value="5">五問</button>
+      <button class="option-pill selected" data-value="10">十問</button>
+      <button class="option-pill" data-value="15">十五問</button>
+      <div class="option-pill-wrap">
+        <button class="option-pill" data-value="all-diff">全問：鬼</button>
+        <div class="option-pill-caption" id="count-all-diff"></div>
+      </div>
+      <div class="option-pill-wrap">
+        <button class="option-pill option-pill-glow" data-value="all">全問：忌</button>
+        <div class="option-pill-caption" id="count-all"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option-group" id="group-difficulty">
+    <div class="option-group-label">難易度</div>
+    <div class="option-row">
+      <button class="option-pill" data-value="easy">易しい</button>
+      <button class="option-pill selected" data-value="normal">普通</button>
+      <button class="option-pill" data-value="hard">難しい</button>
+    </div>
+  </div>
+
+  <div class="option-group" id="group-format">
+    <div class="option-group-label">解答形式</div>
+    <div class="format-cards">
+      <button class="mode-card selected" data-value="choice">
+        <span class="m-title">選択</span>
+      </button>
+      <button class="mode-card" data-value="free">
+        <span class="m-title">入力</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="option-group" id="group-kaii">
+    <div class="option-group-label">怪異乱入</div>
+    <div class="option-row">
+      <div class="option-pill-wrap">
+        <button class="option-pill" data-value="on">あり</button>
+        <div class="option-pill-caption" id="kaii-rate-sub"></div>
+      </div>
+      <button class="option-pill selected" data-value="off">なし</button>
+    </div>
+  </div>
+
+  <button class="btn-start" id="btn-mode-start">この設定で始める</button>
+  <button class="link-back link-back-corner" id="btn-mode-back">タイトルへ戻る</button>
+</section>

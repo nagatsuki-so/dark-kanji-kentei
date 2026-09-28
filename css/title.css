@@ -1,0 +1,85 @@
+  /* ============================================================
+     タイトル画面（#screen-title）・読込エラー画面（#screen-error）
+     ============================================================ */
+  #screen-title, #screen-error{ justify-content:center; align-items:center; text-align:center; gap:28px; }
+  .glyph-guard{
+    font-family:'Yuji Syuku',serif;
+    font-size:100px;
+    color:var(--blood-bright);
+    text-shadow:0 0 22px rgba(201,42,61,0.55), 0 0 60px rgba(139,26,43,0.3);
+    line-height:1;
+  }
+  .title-block h1{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(30px,8vw,32px);
+    margin:0 0 10px;
+    letter-spacing:.04em;
+    color:var(--bone);
+    text-shadow:0 2px 18px rgba(0,0,0,0.8);
+  }
+  .title-block p.sub{
+    margin:0;
+    font-size:14px;
+    color:var(--bone-dim);
+    letter-spacing:.08em;
+  }
+  /* アプリの概要文（3行） */
+  .title-block p.title-overview{
+    max-width:25em; margin:0 auto;
+    font-size:12.5px; line-height:1.9; letter-spacing:.04em;
+  }
+  /* タイトルの「解」が一瞬だけ入れ替わる時の「怪」（血のような赤） */
+  .title-flicker.is-kai{
+    color:var(--blood-bright);
+    text-shadow:0 0 12px rgba(201,42,61,.85);
+  }
+
+  /* タイトル画面の「魑」：ろうそくの炎のように不規則に揺らめく。
+     周期の違う2つの揺れ（明るさ6.5秒・光のにじみ4.1秒）を重ね、同じ動きの繰り返しに見えないようにする。
+     光への配慮として、完全には消えず、明るさの変化はゆるやかにしている */
+  .glyph-candle{
+    animation:candleFlicker 6.5s linear infinite, candleGlow 4.1s ease-in-out infinite;
+  }
+  @keyframes candleFlicker{
+    0%{ opacity:1; }
+    8%{ opacity:.86; }
+    11%{ opacity:.97; }
+    23%{ opacity:.9; }
+    27%{ opacity:1; }
+    41%{ opacity:.82; }
+    44%{ opacity:.95; }
+    58%{ opacity:.88; }
+    61%{ opacity:.62; } /* ふっと暗くなる瞬間 */
+    64%{ opacity:.93; }
+    79%{ opacity:1; }
+    86%{ opacity:.84; }
+    90%{ opacity:.97; }
+    100%{ opacity:1; }
+  }
+  @keyframes candleGlow{
+    0%,100%{ text-shadow:0 0 22px rgba(201,42,61,.55), 0 0 60px rgba(139,26,43,.3); }
+    30%{ text-shadow:0 0 16px rgba(201,42,61,.4), 0 0 44px rgba(139,26,43,.2); }
+    55%{ text-shadow:0 0 28px rgba(230,60,70,.7), 0 0 80px rgba(160,30,45,.4); }
+    80%{ text-shadow:0 0 19px rgba(201,42,61,.5), 0 0 52px rgba(139,26,43,.28); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .glyph-candle{ animation:none; }
+  }
+
+  /* タイトル下の線：タイトルとほぼ同じ幅まで伸ばし、真ん中を明るい赤＋弱い光のにじみで目立たせる。
+     両端は透明に消えていく */
+  .seal-divider{
+    width:200px;height:1px;
+    background:linear-gradient(90deg, transparent, var(--blood-bright), transparent);
+    filter:drop-shadow(0 0 4px rgba(201,42,61,.6)); /* 色のある部分だけが光る（両端の透明な部分は光らない） */
+    margin:4px auto;
+  }
+
+  #screen-title .btn-start{ margin-top:20px; }
+  /* タイトル画面の配置：ボタンを1個分（56px）下げ、タイトルと概要文の周りの余白を広げる。
+     全体は上下中央にそろう作りのため、広げた余白の合計（56+20+20＝96px）と同じだけ上側にも余白を足し、「魑」の位置を変えない */
+  #screen-title{ padding-top:96px; }
+  #screen-title .title-block{ margin-top:20px; }      /* 「魑」とタイトルの間 +20px */
+  #screen-title .seal-divider{ margin:20px auto; }     /* タイトルと概要文の間 +10px×2 */
+  #screen-title .btn-start{ margin-top:20px; }         /* ボタン1個分（56px）下げる */
+  .title-hint{ font-size:12px; color:var(--bone-dim); opacity:.7; }
